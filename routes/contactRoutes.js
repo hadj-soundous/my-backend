@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 
 const sendContactEmail = require("../services/emailService");
-
 const verifyTurnstile = require("../middleware/verifyTurnstile");
 
 module.exports = (db) => {
@@ -11,6 +10,8 @@ module.exports = (db) => {
     router.post("/", verifyTurnstile, async (req, res) => {
 
         try {
+
+            console.log("✅ 1. Request received");
 
             const { name, email, message } = req.body;
 
@@ -21,17 +22,25 @@ module.exports = (db) => {
                 });
             }
 
+            console.log("✅ 2. Inserting into SQLite");
+
             await db.run(
                 `INSERT INTO contacts(name,email,message)
                  VALUES(?,?,?)`,
                 [name, email, message]
             );
 
+            console.log("✅ 3. Saved to SQLite");
+
+            console.log("✅ 4. Sending email");
+
             await sendContactEmail({
-    name,
-    email,
-    message
-});
+                name,
+                email,
+                message
+            });
+
+            console.log("✅ 5. Email sent");
 
             res.status(201).json({
                 success: true,
@@ -40,6 +49,7 @@ module.exports = (db) => {
 
         } catch (err) {
 
+            console.error("❌ CONTACT ERROR");
             console.error(err);
 
             res.status(500).json({
@@ -47,23 +57,6 @@ module.exports = (db) => {
                 message: "Server Error"
             });
 
-            console.log("1. Request received");
-
-await db.run(
-    `INSERT INTO contacts(name,email,message)
-     VALUES(?,?,?)`,
-    [name, email, message]
-);
-
-console.log("2. Saved to database");
-
-await sendContactEmail({
-    name,
-    email,
-    message
-});
-
-console.log("3. Email sent");
         }
 
     });
