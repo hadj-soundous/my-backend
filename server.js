@@ -15,36 +15,37 @@ app.use(express.json());
 app.use(helmet());
 
 (async () => {
+    try {
+        const db = await connectDB();
 
-    const db = await connectDB();
+        app.use("/api/contact", require("./routes/contactRoutes")(db));
 
-    // Contact API
-    app.use("/api/contact", require("./routes/contactRoutes")(db));
+        app.use(
+            "/admin",
+            basicAuth({
+                users: {
+                    admin: "Soundous2026"
+                },
+                challenge: true
+            }),
+            require("./routes/adminRoutes")(db)
+        );
 
-    // Admin Dashboard (Protected)
-    app.use(
-        "/admin",
-        basicAuth({
-            users: {
-                admin: "Soundous2026"
-            },
-            challenge: true
-        }),
-        require("./routes/adminRoutes")(db)
-    );
-
-    // Home route
-    app.get("/", (req, res) => {
-        res.json({
-            success: true,
-            message: "Portfolio Backend Running 🚀"
+        app.get("/", (req, res) => {
+            res.json({
+                success: true,
+                message: "Portfolio Backend Running 🚀"
+            });
         });
-    });
 
-    const PORT = process.env.PORT || 5000;
+        const PORT = process.env.PORT || 5000;
 
-    app.listen(PORT, () => {
-        console.log(`🚀 Server running on port ${PORT}`);
-    });
+        app.listen(PORT, () => {
+            console.log(`🚀 Server running on port ${PORT}`);
+        });
 
+    } catch (err) {
+        console.error("Failed to start server:", err);
+        process.exit(1);
+    }
 })();
