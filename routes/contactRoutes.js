@@ -7,7 +7,7 @@ const verifyTurnstile = require("../middleware/verifyTurnstile");
 
 module.exports = (db) => {
 
-    router.post("/", verifyTurnstile, async (req, res) => {
+    router.post("/", async (req, res) => {
 
         try {
 
