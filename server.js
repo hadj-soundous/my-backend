@@ -43,7 +43,12 @@ app.use(helmet());
         app.listen(PORT, () => {
             console.log(`🚀 Server running on port ${PORT}`);
         });
-
+app.get("/api/test", (req, res) => {
+    res.json({
+        success: true,
+        message: "API is working!"
+    });
+});
     } catch (err) {
         console.error("Failed to start server:", err);
         process.exit(1);
