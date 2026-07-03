@@ -36,7 +36,14 @@ const verifyTurnstile = async (req, res, next) => {
 
     } catch (err) {
 
-        console.error(err);
+        console.error("Turnstile Error:");
+
+        if (err.response) {
+            console.error("Status:", err.response.status);
+            console.error("Data:", err.response.data);
+        } else {
+            console.error(err.message);
+        }
 
         res.status(500).json({
             success: false,
