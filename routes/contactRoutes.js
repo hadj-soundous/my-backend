@@ -47,6 +47,23 @@ module.exports = (db) => {
                 message: "Server Error"
             });
 
+            console.log("1. Request received");
+
+await db.run(
+    `INSERT INTO contacts(name,email,message)
+     VALUES(?,?,?)`,
+    [name, email, message]
+);
+
+console.log("2. Saved to database");
+
+await sendContactEmail({
+    name,
+    email,
+    message
+});
+
+console.log("3. Email sent");
         }
 
     });
